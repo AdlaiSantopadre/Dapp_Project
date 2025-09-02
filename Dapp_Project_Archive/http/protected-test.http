@@ -1,4 +1,0 @@
-### Test accesso a rotta protetta
-GET http://localhost:3000/protected
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZGRyZXNzIjoiMHhBYmMxMjMuLi4iLCJyb2xlIjoiQ0VSVElGSUNBVE9SRV9ST0xFIiwiaWF0IjoxNzU0MTQ5NTY4LCJleHAiOjE3NTQxNTMxNjh9.I9Ez-6qYEjvTCO1L_LBU3CbHLAp5F1qOep7YDhYL-Tw
-
