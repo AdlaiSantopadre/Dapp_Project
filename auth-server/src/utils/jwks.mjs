@@ -18,10 +18,6 @@ export function getJWKS() {
   // se servirà rotazione, qui potrai restituire { keys: [pubJwk, oldPubJwk] }
   return { keys: [publicKey] };
 }
-// Serve lato verifica/interop: espone un endpoint / .well-known/jwks.json che restituisce il/i JWK pubblici.
-
-// Lo usano:
-
-// i client esterni (ad es. la Flutter app, o un altro servizio),
-
-// o lo stesso server se vuoi usare createRemoteJWKSet invece di leggere da file.
+/*getJWKS()
+→ restituisce la chiave pubblica in formato JWKS (per l’endpoint /jwks.json o simile).
+→ serve ai client (es. backend o frontend) per validare i token.*/

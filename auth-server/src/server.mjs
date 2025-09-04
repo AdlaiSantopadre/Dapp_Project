@@ -17,7 +17,7 @@ app.get('/healthz', (_req, res) => res.json({ ok: true }));
 
 app.get('/.well-known/jwks.json', async (req, res) => {
   res.set('Cache-Control', 'public, max-age=300, immutable');
-  res.json(await getJWKS());
+  res.json(getJWKS());
 });
 
 app.use('/auth', authRoutes);
