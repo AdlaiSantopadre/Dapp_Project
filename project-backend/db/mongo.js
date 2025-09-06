@@ -4,7 +4,7 @@ import { MongoClient } from 'mongodb';
 // 🔎 DEBUG LOG
 console.log("🔎 [Mongo.js] MONGO_URI:", process.env.MONGO_URI);
 console.log("🔎 [Mongo.js] DB_NAME:  ", process.env.DB_NAME);
-const uri = process.env.uri || 'mongodb://127.0.0.1:27017';
+const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017';
 const dbName = process.env.DB_NAME || 'documentiDb';
 if (!uri || !dbName) {
   throw new Error("❌ Variabili MONGO_URI e DB_NAME non settate");
