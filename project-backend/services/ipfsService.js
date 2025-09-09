@@ -26,7 +26,8 @@ function makeStorachaClient() {
         const storeFile = process.env.STORACHA_STORE_FILE || '/data/storacha/storacha-cli.json'
         const store = new StoreConf({ path: storeFile })
         const client = await Client.create({ store })
-
+        const spaces = (await client.spaces?.()) || []
+        console.log('[storacha] spaces in store:', spaces.map(s => s?.did?.() ?? s?.did))
         // opzionale: forza lo space
         // await client.setCurrentSpace('did:key:z6Mkk7ogzC5YCuEsSExW4DPZ9So4iVAs8LQYg6yCeunzXNgp')
         const spaceDid = process.env.STORACHA_SPACE_DID
