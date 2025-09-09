@@ -1,5 +1,4 @@
-import * as Client from '@storacha/client'
-import { StoreConf } from '@storacha/client/stores/conf'
+import { getStorachaClient } from './storachaClient.js'
 import { File } from '@web-std/file'
 import { once } from 'node:events'
 import { Readable } from 'node:stream'
@@ -13,55 +12,6 @@ async function streamToBuffer(stream) {
     await once(stream, 'end')
     return Buffer.concat(chunks)
 }
-
-// client singleton
-let clientP = null
-
-function makeStorachaClient() {
-    if (clientP) return clientP
-
-    clientP = (async () => {
-        // path del file CLI (volume Railway o env)
-        const storeFile = process.env.STORACHA_STORE_FILE || '/data/storacha/storacha-cli.json'
-        const store = new StoreConf({ path: storeFile })
-        const client = await Client.create({ store })
-        const spaces = (await client.spaces?.()) || []
-        console.log('[storacha] spaces in store:', spaces.map(s => s?.did?.() ?? s?.did))
-        // opzionale: forza lo space
-        // await client.setCurrentSpace('did:key:z6Mkk7ogzC5YCuEsSExW4DPZ9So4iVAs8LQYg6yCeunzXNgp')
-        const spaceDid = process.env.STORACHA_SPACE_DID
-
-        if (spaceDid) {
-            // prova a impostare direttamente lo space desiderato
-            try {
-                await client.setCurrentSpace(spaceDid)
-            } catch (e) {
-                // se non è registrato nello store, prova ad aggiungerlo e reimpostarlo
-                try { await client.addSpace(spaceDid) } catch { }
-                await client.setCurrentSpace(spaceDid)
-            }
-        } else {
-            // fallback: se non hai messo l'env, prova a usare il primo space disponibile nello store
-            const spaces = (await client.spaces?.()) || []
-            const first = spaces[0]
-            const did = first?.did?.() ?? first?.did
-            if (did) {
-                await client.setCurrentSpace(did)
-            } else {
-                throw new Error('Storacha: nessuno space trovato nello store e STORACHA_SPACE_DID non impostata')
-            }
-        }
-
-        const cur = await (client.currentSpace?.() ?? null)
-        const curDid = cur?.did?.() ?? cur?.did ?? '<unknown>'
-        console.log('[storacha] currentSpace:', curDid)
-
-        return client
-    })()
-
-    return clientP
-}
-
 
 export function makeStorage() {
     const useReal = process.env.TEST_E2E === '1' || process.env.IPFS_USE_REAL === '1'
@@ -89,7 +39,7 @@ export function makeStorage() {
                 const fileSize = typeof size === 'number' && size > 0 ? size : buf.length
                 const type = mimetype || 'application/octet-stream'
 
-                const client = await makeStorachaClient()
+                const client = await getStorachaClient()
                 const file = new File([buf], name, { type })
 
                 let out
