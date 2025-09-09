@@ -3,8 +3,7 @@ import { StoreConf } from '@storacha/client/stores/conf'
 import { File } from '@web-std/file'
 import { once } from 'node:events'
 import { Readable } from 'node:stream'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+
 
 /** Convert Readable → Buffer */
 async function streamToBuffer(stream) {
