@@ -30,3 +30,6 @@ project-backend/utils/jsonformatter.txt
 project-backend/utils/w3up-client.json
 project-backend/utils/proofs.json
 Graphic Architecture.png
+project-backend/config/storacha-cli.json
+project-backend/utils/extract-valid-proofs.mjs
+project-backend/utils/storacha-cli.json
