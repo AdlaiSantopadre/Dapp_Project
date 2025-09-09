@@ -9,7 +9,6 @@
   },
   "scripts": {
     "start": "node src/server.mjs",
-    "start:maint": "sh -c 'tail -f /dev/null'",
     "dev": "dotenv -e .env -- node src/server.mjs",
     "dev:clean": "nodemon --watch src --ext mjs,js,json src/server.mjs",
     "test:mock": "cross-env NODE_ENV=test BYPASS_AUTH=1 mocha \"test/e2e/upload.e2e.test.mjs\" --timeout 30000",
