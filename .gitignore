@@ -34,3 +34,4 @@ project-backend/config/storacha-cli.json
 project-backend/utils/extract-valid-proofs.mjs
 project-backend/utils/storacha-cli.json
 
+project-backend/w3up-client.json

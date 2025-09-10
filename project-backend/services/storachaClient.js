@@ -1,39 +1,44 @@
 // services/storachaClient.js
-import * as Client from '@storacha/client'
-import { StoreConf } from '@storacha/client/stores/conf'
-import path from 'path'
+import * as Client from '@storacha/w3up-client'
 
 let singleton = null
 
+/**
+ * Restituisce un client Storacha (w3up) inizializzato
+ */
 export async function getStorachaClient () {
   if (singleton) return singleton
 
-  const storeFile = process.env.STORACHA_STORE_FILE || '/data/storacha/storacha-cli.json'
-
-  const store = new StoreConf({
-    dir: path.dirname(storeFile),
-    configName: path.basename(storeFile, '.json'),
-  })
-
-  const client = await Client.create({ store })
-
+  const email = process.env.STORACHA_EMAIL
   const spaceDid = process.env.STORACHA_SPACE_DID
-  const spaces = (await client.spaces?.()) || []
-  if (spaceDid) {
-    try {
-      await client.setCurrentSpace(spaceDid)
-    } catch {
-      try { await client.addSpace(spaceDid) } catch {}
-      await client.setCurrentSpace(spaceDid)
-    }
-  } else if (spaces.length) {
-    await client.setCurrentSpace(spaces[0].did?.() ?? spaces[0].did)
-  } else {
-    throw new Error('[storacha] Nessuno space disponibile')
+
+  if (!email) {
+    throw new Error('❌ Variabile STORACHA_EMAIL non impostata')
+  }
+  if (!spaceDid) {
+    throw new Error('❌ Variabile STORACHA_SPACE_DID non impostata')
   }
 
-  console.log('[storacha] currentSpace:', (await client.currentSpace())?.did?.() ?? '<unknown>')
+  const client = await Client.create()
+
+  // login con l'email registrata su Storacha
+  try {
+    await client.login(email)
+  } catch (err) {
+    console.error('❌ Errore login Storacha:', err.message)
+    throw err
+  }
+
+  // forza lo space impostato via ENV
+  try {
+    await client.setCurrentSpace(spaceDid)
+    console.log('[storacha] Current space impostato:', spaceDid)
+  } catch (err) {
+    console.error(`❌ Errore: impossibile impostare lo space ${spaceDid}`)
+    throw err
+  }
 
   singleton = client
-  return singleton
+  return client
 }
+
