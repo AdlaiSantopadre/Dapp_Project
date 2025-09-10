@@ -9,14 +9,8 @@
     {
       "path": "auth-server"
     },
-    {
-      "path": "flutter_frontend"
-    }
+
   ],
-  "settings": {
-    // Impostazioni opzionali per Flutter/Dart
-    
-    
-  }
+  "settings": {}
 }
 
