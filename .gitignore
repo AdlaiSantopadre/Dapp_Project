@@ -35,3 +35,6 @@ project-backend/utils/extract-valid-proofs.mjs
 project-backend/utils/storacha-cli.json
 
 project-backend/w3up-client.json
+project-backend/utils/test-mongo-alt.mjs
+project-backend/utils/testStoracha.js
+project-backend/utils/verifyDelegations.js
