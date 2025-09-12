@@ -36,12 +36,12 @@ function makeStorachaClient() {
   // crea il client UNA VOLTA; usa await dentro ai metodi
   const clientP = (async () => {
     const client = await createClient({
-      space: STORACHA_SPACE_DID,   // DID dello Space
-      agentSecret: STORACHA_AGENT_SECRET, // 👈 usa il secret, NON "principal"
-      dataDir: STORACHA_DATA_DIR,
-      endpoint: STORACHA_ENDPOINT
+      space: process.env.STORACHA_SPACE_DID,   // DID dello Space
+      agentSecret: process.env.STORACHA_AGENT_SECRET, // opzionale in Railway
+      dataDir:process.env.STORACHA_DATA_DIR,
+      endpoint: process.env.STORACHA_ENDPOINT
     })
-    // 🔒 assicurati che lo Space ENV sia nello store e impostalo come corrente
+    // assicurati che lo Space ENV sia nello store e impostalo come corrente
     try { await client.addSpace(STORACHA_SPACE_DID) } catch { }
     await client.setCurrentSpace(STORACHA_SPACE_DID)
 
