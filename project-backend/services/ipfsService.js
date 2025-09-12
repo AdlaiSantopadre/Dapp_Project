@@ -4,6 +4,14 @@ import { File } from '@web-std/file';
 import { once } from 'node:events';
 import { Readable } from 'node:stream';
 
+async function streamToBuffer(stream) {
+  const chunks = [];
+  stream.on('data', (c) => chunks.push(c));
+  await once(stream, 'end');
+  return Buffer.concat(chunks);
+}
+
+
 // function makeMockStorage() {
 //   return {
 //     async put({ name, data, size, mimetype }) {
@@ -19,7 +27,6 @@ function makeStorachaClient() {
     STORACHA_AGENT_SECRET,
     STORACHA_DATA_DIR,
     STORACHA_ENDPOINT,
-     STORACHA_PROOFS,
   } = process.env
 
   if (!STORACHA_SPACE_DID || !STORACHA_AGENT_SECRET) {
@@ -28,15 +35,15 @@ function makeStorachaClient() {
 
   // crea il client UNA VOLTA; usa await dentro ai metodi
   const clientP = (async () => {
-      const client = await createClient({
-        space: STORACHA_SPACE_DID,   // DID dello Space
-        agentSecret: STORACHA_AGENT_SECRET, // 👈 usa il secret, NON "principal"
-        dataDir: STORACHA_DATA_DIR,
-        endpoint: STORACHA_ENDPOINT
-      })
-  // 🔒 assicurati che lo Space ENV sia nello store e impostalo come corrente
-    try { await client.addSpace(STORACHA_SPACE_DID) } catch {}
-    await client.setCurrentSpace(STORACHA_SPACE_DID) 
+    const client = await createClient({
+      space: STORACHA_SPACE_DID,   // DID dello Space
+      agentSecret: STORACHA_AGENT_SECRET, // 👈 usa il secret, NON "principal"
+      dataDir: STORACHA_DATA_DIR,
+      endpoint: STORACHA_ENDPOINT
+    })
+    // 🔒 assicurati che lo Space ENV sia nello store e impostalo come corrente
+    try { await client.addSpace(STORACHA_SPACE_DID) } catch { }
+    await client.setCurrentSpace(STORACHA_SPACE_DID)
 
     // (debug) mostra lo space effettivo
     const current = await (client.currentSpace?.() ?? null)
@@ -51,9 +58,12 @@ function makeStorachaClient() {
       if (!name || !data || !size) throw new Error('ipfsService.put: bad input')
       const client = await clientP
       console.log("DEBUG uploadFile typeof:", typeof client.uploadFile)
-
+      const buffer =
+    Buffer.isBuffer(data) ? data :
+    (data instanceof Readable) ? await streamToBuffer(data) :
+    (() => { throw new Error('data must be Buffer or Readable') })()
       // usa un File “web-like” da Buffer
-      const file = new File([data], name, { type: mimetype || 'application/octet-stream' })
+      const file = new File([buffer], name, { type: mimetype || 'application/octet-stream' })
 
       // alcune versioni ritornano stringa, altre oggetto → normalizza
       const out = await client.uploadFile(file)

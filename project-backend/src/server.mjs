@@ -1,12 +1,14 @@
 import "dotenv/config";
+import { restoreW3upConfigFromEnv } from './bootstrap/w3up.mjs'
 import { createApp } from "./app.mjs";
 import { makeStorage } from "../services/ipfsService.js";
 import { connectToDb } from "../db/mongo.js";
 
 const PORT = process.env.PORT || 8080;
 
+restoreW3upConfigFromEnv() //Bootstrap 
 try {
-  await connectToDb(); // 🔴 connessione aperta all’avvio
+  await connectToDb(); // connessione aperta all’avvio
   const storage = makeStorage(); // decide mock o Storacha reale
   const app = createApp({ storage });
   app.listen(PORT, () => {
@@ -14,7 +16,7 @@ try {
   //console.log(`Server is running on http://localhost:${PORT}`);
   });
   } catch (err) {
-  console.error("❌ Errore inizializzazione backend:", err.message);
+  console.error("Errore inizializzazione backend:", err.message);
   process.exit(1);
   }
 
