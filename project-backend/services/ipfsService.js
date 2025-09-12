@@ -3,6 +3,8 @@ import { create as createClient } from '@storacha/client';
 import { File } from '@web-std/file';
 import { once } from 'node:events';
 import { Readable } from 'node:stream';
+import fs from 'node:fs';
+import path from 'node:path';
 
 async function streamToBuffer(stream) {
   const chunks = [];
@@ -29,20 +31,33 @@ function makeStorachaClient() {
     STORACHA_ENDPOINT,
   } = process.env
 
-  if (!STORACHA_SPACE_DID || !STORACHA_AGENT_SECRET) {
-    throw new Error('Missing Storacha env vars (STORACHA_SPACE_DID / STORACHA_AGENT_SECRET)')
+  if (!STORACHA_SPACE_DID ) {
+    throw new Error('Missing Storacha env vars (STORACHA_SPACE_DID ')
   }
+  // Path di default → Railway volume
+  const dataDir = STORACHA_DATA_DIR || '/data/storacha';
+  const storeFile = path.join(dataDir, 'w3up-client.json')
+
+if (!fs.existsSync(storeFile)) {
+    console.warn(`⚠️  Attenzione: file w3up-client.json NON trovato in ${dataDir}`);
+  } else {
+    console.log(`📂 Uso store Storacha da: ${storeFile}`);
+  }
+
+
+
+
 
   // crea il client UNA VOLTA; usa await dentro ai metodi
   const clientP = (async () => {
     const client = await createClient({
-      space: process.env.STORACHA_SPACE_DID,   // DID dello Space
-      agentSecret: process.env.STORACHA_AGENT_SECRET, // opzionale in Railway
-      dataDir:process.env.STORACHA_DATA_DIR,
-      endpoint: process.env.STORACHA_ENDPOINT
+      space:STORACHA_SPACE_DID,   // DID dello Space
+      agentSecret: process.env.STORACHA_AGENT_SECRET,
+      dataDir, 
+      endpoint: STORACHA_ENDPOINT
     })
     // assicurati che lo Space ENV sia nello store e impostalo come corrente
-    try { await client.addSpace(STORACHA_SPACE_DID) } catch { }
+    try { await client.addSpace(STORACHA_SPACE_DID) } catch { /* già presente */ }
     await client.setCurrentSpace(STORACHA_SPACE_DID)
 
     // (debug) mostra lo space effettivo
