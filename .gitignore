@@ -39,3 +39,4 @@ project-backend/utils/test-mongo-alt.mjs
 project-backend/utils/testStoracha.js
 project-backend/utils/verifyDelegations.js
 project-backend/utils/slim-w3up.js
+project-backend/utils/verifyDelegations.mjs
