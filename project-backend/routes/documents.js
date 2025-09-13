@@ -1,3 +1,9 @@
+// routes/documents.js
+// carica e scarica documenti PDF/PNG su IPFS/Storacha
+// richiede autenticazione e ruoli specifici
+// POST /documents/upload  {form-data file: <file>}  -> { cid, hash, metadata }
+// GET  /documents/:cid   -> file (con header Content-Type, Content-Disposition)
+
 import express from 'express';
 import multer from 'multer';
 import authMiddleware from '../middleware/authMiddleware.js';
@@ -12,7 +18,7 @@ export default function documentsRouter({ storage }) {
   const router = express.Router();
 
   // Limiti e filtro: solo PDF o PNG , max 20MB (configurabile)
-   const upload = multer({
+  const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 20 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
@@ -53,6 +59,7 @@ export default function documentsRouter({ storage }) {
         const hash = sha256Hex(buffer);
 
         // 2) Upload su IPFS/Storacha
+        await client.setCurrentSpace(SPACE_DID);
         const putResult = await storage.put({
           name: originalName,
           data: buffer,
@@ -94,30 +101,30 @@ export default function documentsRouter({ storage }) {
     }
   );
   router.get(
-  '/:cid',
-  authMiddleware,
-  roleMiddleware(['MANUTENTORE_ROLE', 'ISPETTORE_ROLE', 'TITOLARE_ROLE']),
-  async (req, res) => {
-    try {
-      const { cid } = req.params;
-      if (!cid) {
-        return res.status(400).json({ error: 'CID mancante' });
-      }
-      
-      const file = await storage.get(cid);
-      if (!file || !file.data) return res.status(404).json({ error: 'Documento non trovato' });
-      // Imposta gli header per il download
-      // Imposta intestazioni corrette
+    '/:cid',
+    authMiddleware,
+    roleMiddleware(['MANUTENTORE_ROLE', 'ISPETTORE_ROLE', 'TITOLARE_ROLE']),
+    async (req, res) => {
+      try {
+        const { cid } = req.params;
+        if (!cid) {
+          return res.status(400).json({ error: 'CID mancante' });
+        }
+
+        const file = await storage.get(cid);
+        if (!file || !file.data) return res.status(404).json({ error: 'Documento non trovato' });
+        // Imposta gli header per il download
+        // Imposta intestazioni corrette
         res.setHeader('Content-Type', file.mimetype || 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${file.name || 'documento'}"`);
 
-      return res.send(file.data);
-    } catch (err) {
-      console.error('[documents/get] error:', err);
-      res.status(500).json({ error: 'Download fallito' });
+        return res.send(file.data);
+      } catch (err) {
+        console.error('[documents/get] error:', err);
+        res.status(500).json({ error: 'Download fallito' });
+      }
     }
-  }
-);
+  );
 
 
   return router;

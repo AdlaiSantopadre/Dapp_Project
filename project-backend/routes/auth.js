@@ -1,3 +1,5 @@
+//file utilizzato per fare da proxy verso auth-server prima della ristrutturazione del codice
+// project-backend/routes/auth.js
 import express from 'express';
 
 const router = express.Router();

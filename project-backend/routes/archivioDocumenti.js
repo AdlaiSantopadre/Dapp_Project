@@ -1,3 +1,7 @@
+// routes/archivioDocumenti.js
+// gestisce l'archivio documenti (creazione, lettura, elenco)
+// richiede autenticazione e ruoli specifici
+// POST /archivioDocumenti/          { JSON metadata }  -> { ok, documento }
 import { Router } from 'express';
 import { createDocumento, setQrCid,listDocumentiAll, getDocumentoById, listDocumentiByImpianto } from '../services/documentiService.js';
 import authMiddleware from '../middleware/authMiddleware.js';

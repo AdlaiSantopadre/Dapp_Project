@@ -40,3 +40,5 @@ project-backend/utils/testStoracha.js
 project-backend/utils/verifyDelegations.js
 project-backend/utils/slim-w3up.js
 project-backend/utils/verifyDelegations.mjs
+output.pdf
+certificato.pdf

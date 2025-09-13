@@ -1,4 +1,10 @@
 // project-backend/middleware/authMiddleware.js
+// middleware per proteggere le rotte del backend
+// verifica il token JWT emesso da auth-server
+// usa JWKS remoto per validare la firma
+// richiede variabili d'ambiente:
+// AUTH_JWKS_URL - URL del JWKS endpoint di auth-server
+// BYPASS_AUTH=1 - disabilita l'autenticazione (per sviluppo locale)
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 const JWKS = createRemoteJWKSet(new URL(process.env.AUTH_JWKS_URL));

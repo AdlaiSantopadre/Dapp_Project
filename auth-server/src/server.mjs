@@ -9,7 +9,7 @@ import { errorHandler } from './middleware/errorHandler.mjs';
 
 
 const app = express();
-app.set('trust proxy', true); // se usi un proxy inverso (es. Railway, Heroku, ecc)
+app.set('trust proxy', 1); // se dietro a proxy (come per Railway), adegua il numero se hai più proxy
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

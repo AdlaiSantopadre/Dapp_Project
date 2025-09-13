@@ -1,4 +1,11 @@
 // routes/roles.js
+// gestisce l'assegnazione dei ruoli via smart contract
+// richiede autenticazione e ruolo ADMIN_ROLE
+// POST /roles/grant  { role, target }  -> { message, transaction }
+// Utilizzato da admin per assegnare ruoli agli utenti (tramite wallet address )
+// Ruoli possibili: ADMIN_ROLE, CERTIFICATORE_ROLE, MANUTENTORE_ROLE, ISPETTORE_ROLE, TITOLARE_ROLE
+// Ruoli definiti nello smart contract DocumentRegistry.sol
+// Utilizzato da CLI o interfaccia admin
 import express from 'express';
 import { grantUserRole, hasUserRole } from '../services/documentRegistry.js';
 import authMiddleware from '../middleware/authMiddleware.js';

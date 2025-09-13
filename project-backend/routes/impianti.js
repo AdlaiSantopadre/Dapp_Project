@@ -1,3 +1,5 @@
+// routes/impianti.js 
+//accede al file JSON e restituisce la lista degli impianti censiti  
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
