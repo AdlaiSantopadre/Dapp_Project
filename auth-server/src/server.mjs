@@ -15,15 +15,17 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.get('/healthz', (_req, res) => res.json({ ok: true }));
 
-app.get('/.well-known/jwks.json', async (req, res) => {
+
+app.get('/.well-known/jwks.json', async (_req, res) => {
   res.set('Cache-Control', 'public, max-age=300, immutable');
   res.json(getJWKS());
 });
 
 app.use('/auth', authRoutes);
-app.get('/health', (req, res) => res.json({ ok: true }));
+app.get('/health', (_req, res) => res.json({ ok: true }));
 app.use(errorHandler);
 
-app.listen(process.env.PORT || 8081, () =>
-  console.log(`[auth-server] listening on :${process.env.PORT || 8081}`)
-);
+const PORT = process.env.PORT || 8081
+app.listen(PORT, () =>
+  console.log(`[auth-server] listening on :${PORT}`)
+)
