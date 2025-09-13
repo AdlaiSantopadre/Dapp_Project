@@ -59,7 +59,7 @@ export default function documentsRouter({ storage }) {
         const hash = sha256Hex(buffer);
 
         // 2) Upload su IPFS/Storacha
-        await client.setCurrentSpace(SPACE_DID);
+        
         const putResult = await storage.put({
           name: originalName,
           data: buffer,
